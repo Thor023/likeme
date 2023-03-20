@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express()
 const cors = require('cors')
-const { getPost, addPost } = require('./querys')
+const { getPost, addPost, addLike, deletePost } = require('./querys')
 const port = process.env.port || 3000
 
 
@@ -44,5 +44,34 @@ app.post('/posts', async (req, res) => {
         res.send('Post added succesfully!')
     }catch(error) {
         res.json({message: 'No disponible, intentalo luego!'})
+    }
+})
+
+app.put('/posts/like/:id', async (req, res) => {
+    const { id } = req.params
+    try{
+        await addLike(id)
+        res.status(200).json({
+            message: 'Like agregado correctamente'
+        })
+
+    }catch(error){
+        res.status(500).json({
+            message: error.message
+        })
+    }
+})
+
+app.delete('/posts/:id', async (req, res) => {
+    try {
+        const { id } = req.params
+        await deletePost(id)
+        res.status(200).json ({
+            message:'Post eliminado con exito!'
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
     }
 })
